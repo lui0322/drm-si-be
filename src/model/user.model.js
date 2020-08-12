@@ -13,15 +13,11 @@ module.exports = db.sequelize.define(
             type: Sequelize.STRING,
             allowNull: false
         },
-        username: {
-            type: Sequelize.STRING,
-            allowNull: false
-        },
         user_role: {
             type: Sequelize.STRING,
             allowNull: false
         },
-        email: {
+        username: {
             type: Sequelize.STRING,
             unique: true,
             allowNull: false

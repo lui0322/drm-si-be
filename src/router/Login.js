@@ -14,14 +14,13 @@ process.env.SECRET_KEY = config.secret;
 users.post("/auth", (req, res) => {
     User.findOne({
             where: {
-                email: req.body.email
+                username: req.body.username
             }
         })
         .then(user => {
             const schema = Joi.object().keys({
-                email: Joi.string()
+                username: Joi.string()
                     .trim()
-                    .email()
                     .required(),
                 password: Joi.string()
                     .min(6)
@@ -49,12 +48,12 @@ users.post("/auth", (req, res) => {
                     });
                 } else {
                     res.status(401).json({
-                        error: "Invalid email address or password"
+                        error: "Invalid username or password"
                     }); //user doesnt exist
                 }
             } else {
                 res.status(401).json({
-                    error: "Invalid email address or password"
+                    error: "Invalid username or password"
                 }); //authentication failed
             }
         })

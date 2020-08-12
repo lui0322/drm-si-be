@@ -38,7 +38,7 @@ users.get("/role", auth, (req, res, next) => {
 
 users.get("/list", auth, (req, res, next) => {
     User.findAll({
-            attributes: ["id", "email", "user_role", "created"]
+            attributes: ["id", "username", "user_role", "created"]
         })
         .then(user => {
             res.status(200).json({
@@ -54,20 +54,20 @@ users.get("/list", auth, (req, res, next) => {
 });
 
 users.post("/register", (req, res) => {
-    const today = new Date();
+    let today = new Date();
+    today = today.setUTCHours(today.getUTCHours() + config.utcHour);
 
     const userData = {
         name: req.body.name,
-        username: req.body.username,
         user_role: req.body.user_role,
-        email: req.body.email,
+        username: req.body.username,
         password: req.body.password,
         created: today
     };
 
     User.findOne({
             where: {
-                email: req.body.email
+                username: req.body.username
             }
         })
         .then(user => {
@@ -76,15 +76,11 @@ users.post("/register", (req, res) => {
                     .min(2)
                     .max(45)
                     .required(),
+                user_role: Joi.string()
+                    .required(),
                 username: Joi.string()
                     .min(2)
                     .max(45)
-                    .required(),
-                user_role: Joi.string()
-                    .required(),
-                email: Joi.string()
-                    .trim()
-                    .email()
                     .required(),
                 password: Joi.string()
                     .min(6)
@@ -105,7 +101,7 @@ users.post("/register", (req, res) => {
                     User.create(userData)
                         .then(user => {
                             res.status(200).json({
-                                status: user.email + " was successfully registered"
+                                status: user.username + " was successfully registered"
                             });
                         })
                         .catch(err => {
@@ -116,7 +112,7 @@ users.post("/register", (req, res) => {
                 });
             } else {
                 res.status(401).json({
-                    error: user.email + " user already exists"
+                    error: user.username + " user already exists"
                 });
             }
         })
