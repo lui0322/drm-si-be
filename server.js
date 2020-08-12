@@ -24,6 +24,9 @@ app.use("/api/login", Login);
 const User = require("./src/router/User");
 app.use("/api/user", User);
 
+const Admin = require("./src/router/Admin");
+app.use("/api/admin", Admin);
+
 app.listen(port, () => {
     console.log("Server is running on port " + port);
     console.log("Timezone: " + timezone);
