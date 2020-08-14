@@ -18,6 +18,12 @@ users.post("/auth", (req, res) => {
             }
         })
         .then(user => {
+            console.log("user: ", user.status);
+            if (user.status === "Inactive") {
+                return res.status(401).json({
+                    error: "Account is already inactive"
+                }); //user doesnt exist
+            }
             const schema = Joi.object().keys({
                 username: Joi.string()
                     .trim()
