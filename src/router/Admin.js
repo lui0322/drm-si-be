@@ -9,7 +9,12 @@ const config = require("../config/config");
 const auth = require("../middleware/authenticaion");
 const User = require("../model/user.model");
 const Role = require("../model/role.model");
+const Store = require("../model/store.model");
+const Product = require("../model/product.model");
 users.use(cors());
+
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 process.env.SECRET_KEY = config.secret;
 
@@ -38,19 +43,91 @@ users.get("/role", auth, (req, res, next) => {
 
 users.get("/list", auth, (req, res, next) => {
     User.findAll({
-            attributes: ["id", "username", "user_role", "created"]
-        })
-        .then(user => {
-            res.status(200).json({
-                data: user
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
+        attributes: ["id", "username", "user_role", "created"]
+    })
+    .then(user => {
+        res.status(200).json({
+            data: user
         });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+users.get("/stores", auth, (req, res, next) => {
+    Store.findAll({
+        attributes: ["id", "name", "address", "created"]
+    })
+    .then(store => {
+        res.status(200).json({
+            data: store
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+users.get("/products", auth, (req, res, next) => {
+    const search = req.query.search;
+    const page = Number(req.query.page);
+    const limit = Number(req.query.limit);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = limit;
+
+    const schema = Joi.object().keys({
+        search: Joi.string().allow("", null),
+        page: Joi.number(),
+        limit: Joi.number()
+    });
+
+    const validate = schema.validate(req.body);
+
+    if(validate.error) {
+        return res.status(401).json({
+            error: validate.error.details[0].message
+        });
+    }
+
+    Product.findAndCountAll({
+        attributes: ["id", "name", "description", "created"],
+        offset: startIndex,
+        limit: endIndex,
+        where: {
+            [Op.or]: [
+                {
+                    name: {
+                        [Op.like]: `%${search}%`
+                    }
+                },
+                {
+                    description: {
+                        [Op.like]: `%${search}%`
+                    }
+                }
+            ]
+        },
+        order: [["id", "DESC"]]
+    })
+    .then(store => {
+        res.status(200).json({
+            data: store
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
 });
 
 users.post("/register", (req, res) => {
