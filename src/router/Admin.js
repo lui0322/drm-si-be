@@ -41,9 +41,29 @@ users.get("/role", auth, (req, res, next) => {
         });
 });
 
-users.get("/list", auth, (req, res, next) => {
+users.get("/accounts", auth, (req, res, next) => {
     User.findAll({
-        attributes: ["id", "username", "user_role", "created"]
+        attributes: ["id", "name", "username", "user_role", "created"]
+    })
+    .then(user => {
+        res.status(200).json({
+            data: user
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+users.get("/account/:id", auth, (req, res, next) => {
+    User.findOne({
+        attributes: ["id", "name", "address", "mobile", "username", "user_role", "store_id", "status", "created"],
+        where: {
+            id: req.params.id
+        }
     })
     .then(user => {
         res.status(200).json({
@@ -120,6 +140,134 @@ users.get("/products", auth, (req, res, next) => {
     .then(store => {
         res.status(200).json({
             data: store
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+users.put("/update_personal/:id", auth, (req, res) => {
+    const userId = req.params.id;
+    const userData = {
+        name: req.body.name,
+        address: req.body.address,
+        mobile: req.body.mobile
+    };
+
+    const schema = Joi.object().keys({
+        name: Joi.string()
+            .min(2)
+            .max(100)
+            .required(),
+        address: Joi.string()
+            .min(2)
+            .max(100)
+            .required(),
+        mobile: Joi.string()
+            .min(2)
+            .max(100)
+            .required(),
+    });
+
+    const validate = schema.validate(req.body);
+    if (validate.error) {
+        return res.status(401).json({
+            error: validate.error.details[0].message
+        });
+    }
+
+    User.update(userData, {
+        where: {
+            id: userId
+        }
+    })
+    .then(user => {
+        res.status(200).json({
+            status: "Update successful!"
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+users.put("/update_password/:id", auth, (req, res) => {
+    const userId = req.params.id;
+    const userData = {
+        password: req.body.password
+    };
+
+    const schema = Joi.object().keys({
+        password: Joi.string()
+            .min(6)
+            .max(25)
+            .required()
+    });
+
+    const validate = schema.validate(req.body);
+    if (validate.error) {
+        return res.status(401).json({
+            error: validate.error.details[0].message
+        });
+    }
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+        userData.password = hash;
+        User.update(userData, {
+            where: {
+                id: userId
+            }
+        })
+        .then(user => {
+            res.status(200).json({
+                status: "Update successful!"
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+    });
+});
+
+users.put("/update_status/:id", auth, (req, res) => {
+    const userId = req.params.id;
+
+    const userData = {
+        status: req.body.status,
+        store_id: req.body.store_id
+    };
+
+    const schema = Joi.object().keys({
+        status: Joi.string()
+            .required(),
+        store_id: Joi.number()
+            .required()
+    });
+
+    const validate = schema.validate(req.body);
+    if (validate.error) {
+        return res.status(401).json({
+            error: validate.error.details[0].message
+        });
+    }
+
+    User.update(userData, {
+        where: {
+            id: userId
+        }
+    })
+    .then(user => {
+        res.status(200).json({
+            status: "Update successful!"
         });
     })
     .catch(err => {

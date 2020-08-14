@@ -13,7 +13,23 @@ module.exports = db.sequelize.define(
             type: Sequelize.STRING,
             allowNull: false
         },
+        address: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
+        mobile: {
+            type: Sequelize.STRING,
+            allowNull: false
+        },
         user_role: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+        },
+        store_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false
+        },
+        status: {
             type: Sequelize.STRING,
             allowNull: false
         },
