@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
 const Role = require("../model/role.model");
+const util = require("../config/util.config");
+
+process.env.SECRET_KEY = util.secret;
 
 module.exports = (req, res, next) => {
     try {
