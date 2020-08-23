@@ -195,7 +195,7 @@ const inventoryStoreByIdAdd = ({req, res, next}) => {
             });
         } else {
             res.status(401).json({
-                error: inventory.product.name + "(" + inventory.product_id + ") already exists in store " + inventory.store.name 
+                error: inventory.product.name + " was already existed in " + inventory.store.name 
             });
         }
     })
