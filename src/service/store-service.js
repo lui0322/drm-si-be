@@ -1,6 +1,7 @@
 'use strict'
 
 const Store = require("../model/store.model");
+const Joi = require("@hapi/joi");
 
 const storeList = ({req, res, next}) => {
     Store.findAll({

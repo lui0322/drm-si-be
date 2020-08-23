@@ -18,7 +18,7 @@ module.exports = db.sequelize.define(
             allowNull: false
         },
         stock: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.DOUBLE,
             allowNull: false
         },
         created: {

@@ -61,6 +61,22 @@ admin.put("/update_store/:id", auth, (req, res) => {
 });
 
 //product-controller
+admin.get("/product/:id", auth, (req, res, next) => {
+    productService.productById({req, res, next});
+});
+
+admin.post("/product/create", auth, (req, res, next) => {
+    productService.productCreate({req, res, next});
+});
+
+admin.put("/product_update/:id", auth, (req, res, next) => {
+    productService.productUpdate({req, res, next});
+});
+
+admin.delete("/product_delete/:id", auth, (req, res, next) => {
+    productService.productDelete({req, res, next});
+});
+
 admin.get("/products/list", auth, (req, res, next) => {
     productService.productList({req, res, next});
 });
@@ -70,12 +86,20 @@ admin.get("/products", auth, (req, res, next) => {
 });
 
 //inventory-controller
+admin.get("/inventory_product/:id", auth, (req, res, next) => {
+    inventoryService.inventoryProductById({req, res, next});
+});
+
 admin.get("/inventory/:id", auth, (req, res, next) => {
     inventoryService.inventoryStoreByIdPages({req, res, next});
 });
 
 admin.post("/inventory/add", (req, res, next) => {
     inventoryService.inventoryStoreByIdAdd({req, res, next});
+});
+
+admin.put("/inventory_update/:id", auth, (req, res) => {
+    inventoryService.inventoryStoreByIdUpdate({req, res});
 });
 
 admin.delete("/inventory_delete/:id", auth, (req, res) => {

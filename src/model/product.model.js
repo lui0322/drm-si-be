@@ -13,6 +13,10 @@ module.exports = db.sequelize.define(
             type: Sequelize.STRING,
             allowNull: false
         },
+        price: {
+            type: Sequelize.DOUBLE,
+            allowNull: false
+        },
         description: {
             type: Sequelize.STRING,
             allowNull: false

@@ -158,7 +158,7 @@ const userLogin = ({req, res}) => {
         if (user) {
             if (bcrypt.compareSync(req.body.password, user.password)) {
                 let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
-                    expiresIn: '10h'
+                    expiresIn: '12h'
                 });
 
                 res.status(200).json({
