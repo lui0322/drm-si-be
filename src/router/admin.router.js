@@ -13,6 +13,7 @@ const userService = require("../service/user-service");
 const inventoryService = require("../service/inventory-service");
 const productService = require("../service/product-service");
 const storeService = require("../service/store-service");
+const deliveryService = require("../service/delivery-service");
 
 //user-controller
 admin.get("/profile", (req, res) => {
@@ -102,8 +103,29 @@ admin.put("/inventory_update/:id", auth, (req, res) => {
     inventoryService.inventoryStoreByIdUpdate({req, res});
 });
 
-admin.delete("/inventory_delete/:id", auth, (req, res) => {
+admin.delete("/inventory_delete/:id/:product_id", auth, (req, res) => {
     inventoryService.inventoryStoreByIdDelete({req, res});
+});
+
+//delivery-controller
+admin.get("/delivery_product/:id", auth, (req, res, next) => {
+    deliveryService.deliveryProductById({req, res, next});
+});
+
+admin.get("/delivery/:id", auth, (req, res, next) => {
+    deliveryService.deliveryStoreByIdPages({req, res, next});
+});
+
+admin.get("/delivery_productpages/:id", auth, (req, res, next) => {
+    deliveryService.deliveryProductByIdPages({req, res, next});
+});
+
+admin.post("/delivery/add", (req, res, next) => {
+    deliveryService.deliveryStoreByIdAdd({req, res, next});    
+});
+
+admin.delete("/delivery_delete/:id", auth, (req, res) => {
+    deliveryService.deliveryStoreByIdDelete({req, res});
 });
 
 module.exports = admin;

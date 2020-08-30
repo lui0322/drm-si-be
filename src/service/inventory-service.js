@@ -1,5 +1,6 @@
 'use strict'
 
+const Delivery = require("../model/delivery.model");
 const Inventory = require("../model/inventory.model");
 const Product = require("../model/product.model");
 const Store = require("../model/store.model");
@@ -246,8 +247,11 @@ const inventoryStoreByIdUpdate = ({req, res, next}) => {
 
 const inventoryStoreByIdDelete = ({req, res, next}) => {
     const deleteId = req.params.id;
+    const productId = req.params.product_id;
     const schema = Joi.object().keys({
         id: Joi.number()
+            .required(),
+        product_id: Joi.number()
             .required()
     });
 
@@ -273,6 +277,20 @@ const inventoryStoreByIdDelete = ({req, res, next}) => {
             .then(inventory => {
                 res.status(200).json({
                     status: "Delete successful!"
+                });
+            })
+            .then(() => {
+                Delivery.destroy({
+                    where: {
+                        product_id: productId
+                    }
+                })
+                .then()
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error: err
+                    });
                 });
             })
             .catch(err => {

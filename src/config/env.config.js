@@ -2,7 +2,7 @@ const env = {
     database: 'rest_db',
     username: 'user_root',
     password: 'Passw0rd01!',
-    host: 'localhost',
+    host: '192.168.1.3',
     dialect: 'mysql',
     pool: {
         max: 5,
