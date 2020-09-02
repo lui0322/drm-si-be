@@ -223,9 +223,9 @@ const productList = ({req, res, next}) => {
         attributes: ["id", "name", "price", "description", "created"],
         order: [["id", "ASC"]]
     })
-    .then(store => {
+    .then(product => {
         res.status(200).json({
-            data: store
+            data: product
         });
     })
     .catch(err => {

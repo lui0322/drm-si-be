@@ -300,11 +300,6 @@ const deliveryStoreByIdDelete = ({req, res, next}) => {
                     id: deliveryId
                 }
             })
-            .then(delivery => {
-                res.status(200).json({
-                    status: "Delete successful!"
-                });
-            })
             .then(() => {
                 Inventory.findOne({
                     where: {
@@ -320,7 +315,11 @@ const deliveryStoreByIdDelete = ({req, res, next}) => {
                             product_id: inventory.product_id
                         }
                     })
-                    .then()
+                    .then(() => {
+                        res.status(200).json({
+                            status: "Delete successful!"
+                        });
+                    })
                     .catch(err => {
                         console.log(err);
                         res.status(500).json({

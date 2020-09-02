@@ -274,18 +274,17 @@ const inventoryStoreByIdDelete = ({req, res, next}) => {
                     id: deleteId
                 }
             })
-            .then(inventory => {
-                res.status(200).json({
-                    status: "Delete successful!"
-                });
-            })
             .then(() => {
                 Delivery.destroy({
                     where: {
                         product_id: productId
                     }
                 })
-                .then()
+                .then(() => {
+                    res.status(200).json({
+                        status: "Delete successful!"
+                    });
+                })
                 .catch(err => {
                     console.log(err);
                     res.status(500).json({

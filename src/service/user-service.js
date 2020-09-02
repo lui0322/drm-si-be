@@ -1,6 +1,8 @@
 'use strict'
 
 const User = require("../model/user.model");
+const Role = require("../model/role.model");
+const Store = require("../model/store.model");
 
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -26,11 +28,28 @@ const userList = ({req, res, next}) => {
     });
 };
 
+User.belongsTo(Store, { foreignKey: "store_id" });
+Store.belongsTo(User, { foreignKey: "id" });
+
+User.belongsTo(Role, { foreignKey: "user_role" });
+Role.belongsTo(User, { foreignKey: "id" });
+
 const userById = ({req, res, next}) => {
+    const userId = req.params.id;
     User.findOne({
+        include: [
+            {
+                model: Role,
+                attributes: ["role"]
+            },
+            {
+                model: Store,
+                attributes: ["name"]
+            }
+        ],
         attributes: ["id", "name", "address", "mobile", "username", "user_role", "store_id", "status", "created"],
         where: {
-            id: req.params.id
+            id: userId
         }
     })
     .then(user => {

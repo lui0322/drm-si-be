@@ -20,6 +20,10 @@ admin.get("/profile", (req, res) => {
     userService.userProfile({req, res});
 });
 
+admin.get("/userprofile/:id", auth, (req, res, next) => {
+    userService.userById({req, res, next});
+});
+
 admin.get("/role", auth, (req, res, next) => {
     roleService.rolesList({req, res, next});
 });
