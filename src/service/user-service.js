@@ -167,14 +167,14 @@ const userLogin = ({req, res}) => {
         }
     })
     .then(user => {
-        console.log("user: ", user.status);
-        if (user.status === "Inactive") {
-            return res.status(401).json({
-                error: "Account is already inactive"
-            }); //user doesnt exist
-        }
-
         if (user) {
+            console.log("user: ", user.status);
+            if (user.status === "Inactive") {
+                return res.status(401).json({
+                    error: "Account is already inactive"
+                }); //user doesnt exist
+            }
+
             if (bcrypt.compareSync(req.body.password, user.password)) {
                 let token = jwt.sign(user.dataValues, process.env.SECRET_KEY, {
                     expiresIn: '12h'
