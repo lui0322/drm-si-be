@@ -11,8 +11,8 @@ const port = process.env.PORT || util.port;
 const timezone = process.env.TZ || util.timezone;
 
 app.use(cors());
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 app.use(morgan("combined"));
 app.use(express.static("public"));
 
