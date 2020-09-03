@@ -40,6 +40,10 @@ user.get("/inventory/:id", auth, (req, res, next) => {
 });
 
 //sale-controller
+user.get("/salestorebyid/:store_id", auth, (req, res, next) => {
+    saleService.saleStoreByIdPages({req, res, next});
+});
+
 user.get("/salebyuseridpending/:id", auth, (req, res, next) => {
     saleService.saleByUserIdPending({req, res, next});
 });
@@ -50,6 +54,10 @@ user.post("/salebyuseridcreate/add", auth, (req, res, next) => {
 
 user.delete("/salebyuseriddelete/:id", auth, (req, res, next) => {
     saleService.saleByUserIdDelete({req, res, next});
+});
+
+user.put("/salebyuseridupdate/:user_id/:store_id/:tran_id/:status", auth, (req, res, next) => {
+    saleService.saleByUserIdUpdate({req, res, next});
 });
 
 module.exports = user;

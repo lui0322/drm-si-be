@@ -14,6 +14,7 @@ const inventoryService = require("../service/inventory-service");
 const productService = require("../service/product-service");
 const storeService = require("../service/store-service");
 const deliveryService = require("../service/delivery-service");
+const saleService = require("../service/sale-service");
 
 //user-controller
 admin.get("/profile", (req, res) => {
@@ -130,6 +131,15 @@ admin.post("/delivery/add", (req, res, next) => {
 
 admin.delete("/delivery_delete/:id", auth, (req, res) => {
     deliveryService.deliveryStoreByIdDelete({req, res});
+});
+
+//sale-controller
+admin.get("/salestorebyid/:store_id", auth, (req, res, next) => {
+    saleService.saleStoreByIdPages({req, res, next});
+});
+
+admin.delete("/salebyiddelete/:id", auth, (req, res, next) => {
+    saleService.saleByUserIdDelete({req, res, next});
 });
 
 module.exports = admin;

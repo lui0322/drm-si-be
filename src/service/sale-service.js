@@ -279,13 +279,139 @@ const saleByUserIdDelete = ({req, res, next}) => {
         console.log(err);
         res.status(500).json({
             error: err
-        }, () => {
-            return;
         });
     });  
 };
 
+const saleByUserIdUpdate = ({req, res, next}) => {
+    const userId = req.params.user_id;
+    const storeId = req.params.store_id;
+    const tranId = req.params.tran_id;
+    const status = req.params.status;
+    const schema = Joi.object().keys({
+        user_id: Joi.number()
+            .required(),
+        store_id: Joi.number()
+            .required(),
+        tran_id: Joi.number()
+            .required(),
+        status: Joi.string()
+            .required()
+    });
+
+    const validate = schema.validate(req.params);
+    if (validate.error) {
+        return res.status(401).json({
+            error: validate.error.details[0].message
+        });
+    }
+
+    Sale.findOne({
+        where: {
+            user_id: userId,
+            store_id: storeId,
+            tran_id: tranId
+        },
+        order: [["id", "ASC"]]
+    })
+    .then(sale => {
+        if(sale) {
+            Sale.update({status: status}, {
+                where: {
+                    user_id: userId,
+                    store_id: storeId,
+                    tran_id: tranId
+                }
+            })
+            .then(() => {
+                res.status(200).json({
+                    status: "Update successful!"
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    error: err
+                });
+            }); 
+        } else {
+            res.status(401).json({
+                error: "Sale record not found"
+            });
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    }); 
+
+};
+
+const saleStoreByIdPages = ({req, res, next}) => {
+    const store_id = req.params.store_id;
+    const search = req.query.search;
+    const page = Number(req.query.page);
+    const limit = Number(req.query.limit);
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = limit;
+
+    const schema = Joi.object().keys({
+        store_id: Joi.number(),
+        search: Joi.string().allow("", null),
+        page: Joi.number(),
+        limit: Joi.number()
+    });
+
+    const validate = schema.validate(req.query);
+
+    if(validate.error) {
+        return res.status(401).json({
+            error: validate.error.details[0].message
+        });
+    }
+
+    Sale.findAndCountAll({
+        include: [
+            {
+              model: Product,
+              attributes: ["name", "price", "description"],
+              where: {
+                  name: {
+                      [Op.like]: `%${search}%`
+                  }
+              }
+            },
+            {
+                model: Store,
+                attributes: ["name"]
+            }
+        ],
+        attributes: ["id", "tran_id", "store_id", "product_id", "stock", "amount", "status", "created"],
+        where: {
+            store_id: store_id
+        },
+        offset: startIndex,
+        limit: endIndex,
+        order: [["id", "DESC"]]
+    })
+    .then(sale => {
+        res.status(200).json({
+            data: sale
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+};
 
 module.exports.saleByUserIdPending = saleByUserIdPending;
 module.exports.saleByUserIdCreate = saleByUserIdCreate;
 module.exports.saleByUserIdDelete = saleByUserIdDelete;
+module.exports.saleByUserIdUpdate = saleByUserIdUpdate;
+module.exports.saleStoreByIdPages = saleStoreByIdPages;

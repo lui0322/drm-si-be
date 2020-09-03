@@ -6,7 +6,6 @@ const util = require("../config/util.config");
 
 const Joi = require("@hapi/joi");
 const Sequelize = require("sequelize");
-const inventoryModel = require("../model/inventory.model");
 const Op = Sequelize.Op;
 
 
